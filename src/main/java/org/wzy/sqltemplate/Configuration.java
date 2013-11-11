@@ -14,6 +14,7 @@ import java.util.concurrent.ConcurrentHashMap;
  * @author Wen
  * 
  */
+
 public class Configuration {
 
 	private Map<String, SqlTemplate> templateCache;
