@@ -2,6 +2,9 @@ package org.wzy.sqltemplate;
 
 import java.io.BufferedInputStream;
 import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -86,5 +89,27 @@ public class Configuration {
 
 		return sb.toString();
 	}
+
+	public boolean isCacheTemplate() {
+		return cacheTemplate;
+	}
+
+	public void setCacheTemplate(boolean cacheTemplate) {
+		this.cacheTemplate = cacheTemplate;
+	}
+
+	public Charset getCharset() {
+		return charset;
+	}
+
+	public void setCharset(Charset charset) {
+		this.charset = charset;
+	}
+
+	public SqlTemplate getTemplate(File tplFle) throws FileNotFoundException, IOException {
+		return this.getTemplate(new FileInputStream(tplFle));
+	}
+	
+	
 
 }
