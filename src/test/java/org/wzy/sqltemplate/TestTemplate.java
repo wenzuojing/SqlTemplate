@@ -3,6 +3,12 @@ package org.wzy.sqltemplate;
 import java.util.ArrayList;
 import java.util.HashMap;
 
+
+
+import java.util.List;
+import java.util.Map;
+
+import org.junit.Assert;
 import org.junit.Test;
 
 public class TestTemplate {
@@ -19,7 +25,7 @@ public class TestTemplate {
 
 		map.put("id", "11");
 
-		SqlInfo process = template.process(map);
+		SqlMeta process = template.process(map);
 
 		System.out.println(process);
 	}
@@ -36,7 +42,7 @@ public class TestTemplate {
 
 		map.put("name", "1fffdsfdf1");
 
-		SqlInfo process = template.process(map);
+		SqlMeta process = template.process(map);
 
 		System.out.println(process);
 	}
@@ -48,14 +54,14 @@ public class TestTemplate {
 		Configuration configuration = new Configuration();
 
 		SqlTemplate template = configuration
-				.getTemplate("insert into user  <set> <if test='id != null '> id = #{id} ,</if><if test='name != null '> name = #{name} ,</if> </set> ");
+				.getTemplate("update user  <set> <if test='id != null '> id = #{id} ,</if><if test='name != null '> name = #{name} ,</if> </set> ");
 
 		HashMap<String, Object> map = new HashMap<String, Object>();
 
 		map.put("id", "123");
 		map.put("name", "1fffdsfdf1");
 
-		SqlInfo process = template.process(map);
+		SqlMeta process = template.process(map);
 
 		System.out.println(process);
 
@@ -75,7 +81,7 @@ public class TestTemplate {
 		//map.put("id", "123");
 		//map.put("name", "hhh1");
 
-		SqlInfo process = template.process(map);
+		SqlMeta process = template.process(map);
 
 		System.out.println(process);
 
@@ -110,11 +116,64 @@ public class TestTemplate {
 		
 		map.put("list", map2) ;
 
-		SqlInfo process = template.process(map);
+		SqlMeta process = template.process(map);
 
 		System.out.println(process);
 
 	}
+	
+	@Test
+	public void testTemplateEngin(){
+		
+		SqlTemplateEngin sqlTemplateEngin = new SqlTemplateEngin();
+		String sqlTpl = "select * from user_info <where><if test=' username != null' > and  username = #{username} </if><if test=' email != null' > and  email = #{email} </if></where> ";
+		//从字符串读取sql模板内容,还可以从单独的文件读取  
+		SqlTemplate sqlTemplate = sqlTemplateEngin.getSqlTemplate(sqlTpl) ;
+		
+		Bindings bind = new Bindings().bind("email", "wenzuojing@gmail.com");
+		
+		SqlMeta sqlMeta = sqlTemplate.process(bind) ; //可传map对象或javabean对象
+		
+		//System.out.println(sqlMeta.getSql());
+		
+		Assert.assertEquals("select * from user_info  WHERE  email = ?   ", sqlMeta.getSql());
+		List<Object> parameter = sqlMeta.getParameter(); //取出参数
+		Assert.assertEquals(1, parameter.size());
+		
+		
+		
+		bind.bind("username", "wenzuojing") ;
+		sqlMeta = sqlTemplate.process(bind) ;
+		Assert.assertEquals("select * from user_info  WHERE  username = ?   and  email = ?   ", sqlMeta.getSql());
+		List<Object> parameter2 = sqlMeta.getParameter();//取出参数
+		Assert.assertEquals( 2  ,parameter2.size() ); 
+		
+	}
+	
+	
+	@Test
+	public void testTemplateEngin2(){
+		
+		SqlTemplateEngin sqlTemplateEngin = new SqlTemplateEngin();
+		
+		Map<String ,Object > userInfo = new HashMap<String,Object>() ;
+		
+		userInfo.put("id", "123456") ;
+		userInfo.put("email", "wenzuojing@126.com") ;
+		
+		String sqlTpl =" update userinfo <set> <if test ='email != null '> email = #{email} </if>, <if test='age'> age = #{age} </if> </set> where id = #{id}" ;
+		
+		SqlTemplate sqlTemplate = sqlTemplateEngin.getSqlTemplate(sqlTpl) ;
+		
+		SqlMeta sqlMeta = sqlTemplate.process(userInfo) ;
+		
+		Assert.assertEquals(" update userinfo  SET email = ?    where id = ? ", sqlMeta.getSql());
+		
+		List<Object> parameter = sqlMeta.getParameter(); //取出参数
+		Assert.assertEquals(2, parameter.size());
+		
+	}
+	
 	
 	
 
