@@ -55,7 +55,7 @@ public class SqlTemplate {
 		this.cfg = cfg;
 	}
 
-	public SqlInfo process(Object data) {
+	public SqlMeta process(Object data) {
 
 		Context context = new Context(cfg, data);
 
@@ -63,7 +63,7 @@ public class SqlTemplate {
 
 		parseParameter(context);
 
-		return new SqlInfo(context.getSql(), context.getParameter());
+		return new SqlMeta(context.getSql(), context.getParameter());
 	}
 
 	private void parseParameter(final Context context) {
