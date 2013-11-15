@@ -50,8 +50,11 @@ public class Configuration {
 	}
 
 	private SqlTemplate createTemplate(String content) {
+		SqlTemplate template = new SqlTemplate.SqlTemplateBuilder(this,content ).build() ;
+		
+		templateCache.put(content, template) ;
 
-		return new SqlTemplate.SqlTemplateBuilder(this,content ).build();
+		return  template;
 	}
 
 	public SqlTemplate getTemplate(InputStream in) throws IOException {
