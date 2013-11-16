@@ -9,10 +9,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.nio.charset.Charset;
-import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
-
-import javax.imageio.stream.FileImageInputStream;
 
 /**
  * 
@@ -22,7 +19,7 @@ import javax.imageio.stream.FileImageInputStream;
 
 public class Configuration {
 
-	private Map<String, SqlTemplate> templateCache;
+	private ConcurrentHashMap<String, SqlTemplate> templateCache;
 
 	private transient boolean cacheTemplate;
 
@@ -57,8 +54,8 @@ public class Configuration {
 	private SqlTemplate createTemplate(String content) {
 		SqlTemplate template = new SqlTemplate.SqlTemplateBuilder(this, content)
 				.build();
-
-		templateCache.put(content, template);
+		
+		templateCache.putIfAbsent(content, template) ;
 
 		return template;
 	}
