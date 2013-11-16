@@ -12,6 +12,8 @@ import java.nio.charset.Charset;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
+import javax.imageio.stream.FileImageInputStream;
+
 /**
  * 
  * @author Wen
@@ -53,8 +55,12 @@ public class Configuration {
 	}
 
 	private SqlTemplate createTemplate(String content) {
+		SqlTemplate template = new SqlTemplate.SqlTemplateBuilder(this, content)
+				.build();
 
-		return new SqlTemplate.SqlTemplateBuilder(this,content ).build();
+		templateCache.put(content, template);
+
+		return template;
 	}
 
 	public SqlTemplate getTemplate(InputStream in) throws IOException {
@@ -68,6 +74,11 @@ public class Configuration {
 
 		return getTemplate(content);
 
+	}
+
+	public SqlTemplate getTemplate(File tplFile) throws FileNotFoundException,
+			IOException {
+		return this.getTemplate(new FileInputStream(tplFile));
 	}
 
 	private String readerContent(InputStream in) throws IOException {
@@ -105,11 +116,5 @@ public class Configuration {
 	public void setCharset(Charset charset) {
 		this.charset = charset;
 	}
-
-	public SqlTemplate getTemplate(File tplFle) throws FileNotFoundException, IOException {
-		return this.getTemplate(new FileInputStream(tplFle));
-	}
-	
-	
 
 }

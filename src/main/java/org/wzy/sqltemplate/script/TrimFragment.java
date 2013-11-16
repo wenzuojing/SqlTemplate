@@ -16,8 +16,8 @@ public class TrimFragment implements SqlFragment {
 
 	public TrimFragment(SqlFragment contents, String prefix, String suffix,
 			String prefixesToOverride, String suffixesToOverride) {
-		this(contents, prefix, suffix, Arrays.asList(prefixesToOverride
-				.split("|")), Arrays.asList(suffixesToOverride.split("|")));
+		this(contents, prefix, suffix, prefixesToOverride == null ? null  :  Arrays.asList(prefixesToOverride
+				.split("\\|")), suffixesToOverride == null  ?  null  : Arrays.asList(suffixesToOverride.split("\\|")));
 	}
 
 	public TrimFragment(SqlFragment contents, String prefix, String suffix,
