@@ -78,6 +78,7 @@ public class Configuration {
 
 	public SqlTemplate getTemplate(File tplFile) throws FileNotFoundException,
 			IOException {
+		
 		return this.getTemplate(new FileInputStream(tplFile));
 	}
 
