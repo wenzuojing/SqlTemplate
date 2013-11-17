@@ -9,7 +9,11 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.nio.charset.Charset;
+import java.util.concurrent.Callable;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.Future;
+import java.util.concurrent.FutureTask;
 
 /**
  * 
@@ -19,7 +23,7 @@ import java.util.concurrent.ConcurrentHashMap;
 
 public class Configuration {
 
-	private ConcurrentHashMap<String, SqlTemplate> templateCache;
+	private ConcurrentHashMap<String, FutureTask<SqlTemplate>> templateCache;
 
 	private transient boolean cacheTemplate;
 
@@ -35,16 +39,39 @@ public class Configuration {
 		this.cacheTemplate = cacheTemplate;
 		this.charset = charset;
 
-		templateCache = new ConcurrentHashMap<String, SqlTemplate>();
+		templateCache = new ConcurrentHashMap<String, FutureTask<SqlTemplate>>();
 	}
 
-	public SqlTemplate getTemplate(String content) {
+	public SqlTemplate getTemplate(final String content) {
 
 		if (cacheTemplate) {
-			SqlTemplate sqlTemplate = templateCache.get(content);
 
-			if (sqlTemplate != null)
-				return sqlTemplate;
+			FutureTask<SqlTemplate> f = templateCache.get(content);
+
+			if (f == null) {
+				FutureTask<SqlTemplate> ft = new FutureTask<SqlTemplate>(
+						new Callable<SqlTemplate>() {
+
+							public SqlTemplate call() throws Exception {
+								return createTemplate(content);
+							}
+						});
+
+				f = templateCache.putIfAbsent(content, ft);
+
+				if (f == null) {
+					ft.run();
+					f = ft;
+				}
+			}
+
+			try {
+				return f.get();
+			} catch (Exception e) {
+				templateCache.remove(content);
+				throw new RuntimeException(e);
+			}
+
 		}
 
 		return createTemplate(content);
@@ -54,9 +81,6 @@ public class Configuration {
 	private SqlTemplate createTemplate(String content) {
 		SqlTemplate template = new SqlTemplate.SqlTemplateBuilder(this, content)
 				.build();
-		
-		templateCache.putIfAbsent(content, template) ;
-
 		return template;
 	}
 
@@ -75,7 +99,7 @@ public class Configuration {
 
 	public SqlTemplate getTemplate(File tplFile) throws FileNotFoundException,
 			IOException {
-		
+
 		return this.getTemplate(new FileInputStream(tplFile));
 	}
 
