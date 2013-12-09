@@ -116,11 +116,10 @@ public class SqlTemplate {
 			try {
 				document = buildXml(templateContent);
 			} catch (Exception e) {
-				new RuntimeException("Error constructing the XML object");
+				throw new RuntimeException("Error constructing the XML object");
 			}
 
-			List<SqlFragment> contents = buildDynamicTag(document
-					.getFirstChild());
+			List<SqlFragment> contents = buildDynamicTag(document.getElementsByTagName("script").item(0));
 
 			return new SqlTemplate(new MixedSqlFragment(contents), cfg);
 
@@ -164,7 +163,7 @@ public class SqlTemplate {
 				throws ParserConfigurationException, SAXException, IOException {
 			DocumentBuilderFactory factory = DocumentBuilderFactory
 					.newInstance();
-			factory.setValidating(false);
+			factory.setValidating(true);
 
 			factory.setNamespaceAware(false);
 			factory.setIgnoringComments(true);
@@ -177,8 +176,8 @@ public class SqlTemplate {
 
 				public InputSource resolveEntity(String publicId,
 						String systemId) throws SAXException, IOException {
-					// TODO Auto-generated method stub
-					return null;
+					String file = SqlTemplate.class.getResource("script-1.0.dtd").getFile() ;
+					return new InputSource(file);
 				}
 			});
 			builder.setErrorHandler(new ErrorHandler() {
@@ -197,7 +196,7 @@ public class SqlTemplate {
 				}
 			});
 
-			InputSource inputSource = new InputSource(new StringReader(String.format("<sql>%s</sql>", templateContent)));
+			InputSource inputSource = new InputSource(new StringReader(String.format("<?xml version = \"1.0\" ?>\r\n<!DOCTYPE script SYSTEM \"script-1.0.dtd\">\r\n<script>%s</script>", templateContent)));
 
 			return builder.parse(inputSource);
 		}
