@@ -176,8 +176,7 @@ public class SqlTemplate {
 
 				public InputSource resolveEntity(String publicId,
 						String systemId) throws SAXException, IOException {
-					String file = SqlTemplate.class.getResource("script-1.0.dtd").getFile() ;
-					return new InputSource(file);
+					return new InputSource(SqlTemplate.class.getResourceAsStream("script-1.0.dtd"));
 				}
 			});
 			builder.setErrorHandler(new ErrorHandler() {
