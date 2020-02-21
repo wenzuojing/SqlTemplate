@@ -26,7 +26,7 @@ public class TestTemplate {
 		map.put("id", "11");
 
 		SqlMeta process = template.process(map);
-
+		System.out.println(process.getSql());
 		System.out.println(process);
 	}
 
