@@ -55,15 +55,4 @@
         </plugins>
     </build>
 
-    <distributionManagement>
-        <repository>
-            <id>rdc-releases</id>
-            <url>https://repo.rdc.aliyun.com/repository/82868-release-NNYynv/</url>
-        </repository>
-        <snapshotRepository>
-            <id>rdc-snapshots</id>
-            <url>https://repo.rdc.aliyun.com/repository/82868-snapshot-fdwmt8/</url>
-        </snapshotRepository>
-    </distributionManagement>
-
 </project>
