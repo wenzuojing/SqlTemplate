@@ -5,6 +5,9 @@ import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 
+import cn.hutool.core.date.DateTime;
+import cn.hutool.core.date.DateUtil;
+
 /**
  * 便于模板中日期的一些操作
  *
@@ -33,4 +36,40 @@ public class CommonUtil {
         }
     }
 
+    /**
+     * 给一个指定日期，返回这个日期对应的上一个星期的星期一是哪天
+     * @param date 给定的日期
+     * @return 指定日期的上一个星期的星期一
+     */
+    public String getLastWeekMonday(String date){
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyyMMdd");
+        try {
+            Date d = simpleDateFormat.parse(date);
+            DateTime dateTime = DateUtil.offsetWeek(d,-1);
+            Calendar calendar = DateUtil.beginOfWeek(dateTime.toCalendar(), true);
+            Date monday = calendar.getTime();
+            return simpleDateFormat.format(monday);
+        } catch (ParseException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    /**
+     * 给一个指定日期，返回这个日期对应的上一个星期的星期五是哪天
+     * @param date 给定的日期
+     * @return 指定日期的上一个星期的星期五
+     */
+    public String getLastWeekFriday(String date){
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyyMMdd");
+        try {
+            Date d = simpleDateFormat.parse(date);
+            DateTime dateTime = DateUtil.offsetWeek(d,-1);
+            Calendar calendar = DateUtil.beginOfWeek(dateTime.toCalendar(), true);
+            calendar.add(Calendar.DATE,4);
+            Date friday = calendar.getTime();
+            return simpleDateFormat.format(friday);
+        } catch (ParseException e) {
+            throw new RuntimeException(e);
+        }
+    }
 }
