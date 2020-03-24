@@ -37,15 +37,41 @@ public class CommonUtil {
     }
 
     /**
+     * 给一个指定日期，返回这个日期对应的星期的星期一是哪天
+     *
+     * @param date 给定的日期
+     * @return 指定日期所在星期的星期一
+     */
+    public String getWeekMonday(String date) {
+        DateTime d = DateUtil.parse(date, "yyyyMMdd");
+        Calendar calendar = DateUtil.beginOfWeek(d.toCalendar(), true);
+        return DateUtil.format(calendar.getTime(), "yyyyMMdd");
+    }
+
+    /**
+     * 给一个指定日期，返回这个日期对应的星期的星期五是哪天
+     *
+     * @param date 给定的日期
+     * @return 指定日期所在星期的星期五
+     */
+    public String getWeekFriday(String date) {
+        DateTime d = DateUtil.parse(date, "yyyyMMdd");
+        Calendar calendar = DateUtil.beginOfWeek(d.toCalendar(), true);
+        calendar.add(Calendar.DATE, 4);
+        return DateUtil.format(calendar.getTime(), "yyyyMMdd");
+    }
+
+    /**
      * 给一个指定日期，返回这个日期对应的上一个星期的星期一是哪天
+     *
      * @param date 给定的日期
      * @return 指定日期的上一个星期的星期一
      */
-    public String getLastWeekMonday(String date){
+    public String getLastWeekMonday(String date) {
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyyMMdd");
         try {
             Date d = simpleDateFormat.parse(date);
-            DateTime dateTime = DateUtil.offsetWeek(d,-1);
+            DateTime dateTime = DateUtil.offsetWeek(d, -1);
             Calendar calendar = DateUtil.beginOfWeek(dateTime.toCalendar(), true);
             Date monday = calendar.getTime();
             return simpleDateFormat.format(monday);
@@ -56,16 +82,17 @@ public class CommonUtil {
 
     /**
      * 给一个指定日期，返回这个日期对应的上一个星期的星期五是哪天
+     *
      * @param date 给定的日期
      * @return 指定日期的上一个星期的星期五
      */
-    public String getLastWeekFriday(String date){
+    public String getLastWeekFriday(String date) {
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyyMMdd");
         try {
             Date d = simpleDateFormat.parse(date);
-            DateTime dateTime = DateUtil.offsetWeek(d,-1);
+            DateTime dateTime = DateUtil.offsetWeek(d, -1);
             Calendar calendar = DateUtil.beginOfWeek(dateTime.toCalendar(), true);
-            calendar.add(Calendar.DATE,4);
+            calendar.add(Calendar.DATE, 4);
             Date friday = calendar.getTime();
             return simpleDateFormat.format(friday);
         } catch (ParseException e) {
