@@ -14,19 +14,35 @@ import org.junit.Test;
 public class TestTemplate {
 
 	@Test
+	public void testTime(){
+		Configuration configuration = new Configuration();
+
+		SqlTemplate template = configuration
+			.getTemplate("select * from user where <if test='id != null ' > id  = #{id} </if> T = #{T},T1=#{util.addDays(T,15)}");
+
+		HashMap<String, Object> map = new HashMap<String, Object>();
+
+		map.put("id", "11");
+		map.put("T","20200322");
+		SqlMeta process = template.process(map);
+		System.out.println(process.getSql());
+		System.out.println(process);
+	}
+
+	@Test
 	public void testIf() {
 
 		Configuration configuration = new Configuration();
 
 		SqlTemplate template = configuration
-				.getTemplate("select * from user where <if test='id != null ' > id  = #{id} </if>");
+				.getTemplate("select * from user where <if test='id != null ' > id  = #{id} </if> id = #{id-1}");
 
 		HashMap<String, Object> map = new HashMap<String, Object>();
 
 		map.put("id", "11");
 
 		SqlMeta process = template.process(map);
-
+		System.out.println(process.getSql());
 		System.out.println(process);
 	}
 
